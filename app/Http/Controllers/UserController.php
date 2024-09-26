@@ -31,4 +31,46 @@ class UserController extends Controller
             'data' => $user
         ], 201);
     }
+
+    public function show($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Pengguna tidak di temukan'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+        ]);
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Pengguna tidak di temukan'
+            ], 404);
+        }
+
+        $user->update($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengguna berhasil di perharui',
+            'data' => $user
+        ]);
+    }
 }
